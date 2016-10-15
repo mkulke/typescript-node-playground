@@ -6,8 +6,8 @@ const assert = require('assert');
 type EqualOrNothing = number | null;
 
 interface SomeObject {
-  orig: number,
-  mod: EqualOrNothing,
+  orig: number;
+  mod: EqualOrNothing;
 }
 
 assert(true);
