@@ -1,8 +1,18 @@
 'use strict';
 
-const _ = require('lodash');
+import _ = require('lodash');
 const assert = require('assert');
 
+type EqualOrNothing = number | null;
+
+interface SomeObject {
+  orig: number,
+  mod: EqualOrNothing,
+}
+
 assert(true);
-const mgns = _.map([1, 2], e => e + 1);
-console.log(mgns.join(','));
+const mgns: SomeObject[] = _.map([1, 2], orig => {
+  const mod = orig % 2 === 0 ? orig : null;
+  return { orig, mod };
+});
+console.log('%j', mgns);
