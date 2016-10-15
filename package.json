@@ -10,5 +10,8 @@
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^4.0.30"
+  },
+  "dependencies": {
+    "lodash": "^4.16.4"
   }
 }
