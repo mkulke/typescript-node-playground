@@ -1,5 +1,5 @@
 {
-    "rules": {
+    "jsRules": {
         "class-name": true,
         "comment-format": [
             true,
@@ -11,11 +11,8 @@
         ],
         "no-duplicate-variable": true,
         "no-eval": true,
-        "no-internal-module": true,
         "no-trailing-whitespace": true,
         "no-unsafe-finally": true,
-        "no-var-keyword": true,
-        "no-unused-variable": true,
         "one-line": [
             true,
             "check-open-brace",
@@ -23,12 +20,61 @@
         ],
         "quotemark": [
             true,
-            "single"
+            "single",
+            "avoid-escape"
         ],
         "semicolon": [
             true,
             "always"
         ],
+        "triple-equals": [
+            true,
+            "allow-null-check"
+        ],
+        "variable-name": [
+            true,
+            "ban-keywords"
+        ],
+        "whitespace": [
+            true,
+            "check-branch",
+            "check-decl",
+            "check-operator",
+            "check-separator",
+            "check-type"
+        ]
+    },
+    "rules": {
+        "class-name": true,
+        "comment-format": [
+            true,
+            "check-space"
+        ],
+        "indent": [
+            true,
+            "spaces"
+        ],
+        "no-eval": true,
+        "no-internal-module": true,
+        "no-trailing-whitespace": true,
+        "no-unsafe-finally": true,
+        "no-var-keyword": true,
+        "no-var-requires": true,
+        "one-line": [
+            true,
+            "check-open-brace",
+            "check-whitespace"
+        ],
+        "quotemark": [
+            true,
+            "single",
+            "avoid-escape"
+        ],
+        "semicolon": [
+            true,
+            "always"
+        ],
+        "trailing-comma": [true, {"multiline": "always", "singleline": "never"}],
         "triple-equals": [
             true,
             "allow-null-check"

@@ -15,13 +15,12 @@ Build
 ===
 
 ```
-tslint *.ts
-tsc
+npm run-script build
 ```
 
 Run
 ===
 
 ```
-node index.js
+npm start
 ```
