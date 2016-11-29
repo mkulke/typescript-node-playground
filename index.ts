@@ -2,7 +2,7 @@
 
 import _ = require('lodash');
 import assert = require('assert');
-import myModule = require('./my-module');
+import myModule = require('./myModule');
 
 type EqualOrNothing = number | null;
 
