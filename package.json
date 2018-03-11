@@ -12,13 +12,14 @@
   "license": "ISC",
   "devDependencies": {
     "@types/chai": "^3.4.34",
-    "@types/lodash": "^4.14.37",
+    "@types/lodash": "^4.14.104",
     "@types/mocha": "^2.2.33",
     "@types/node": "^4.0.30",
     "chai": "^3.5.0",
     "mocha": "^3.2.0"
   },
   "dependencies": {
-    "lodash": "^4.16.4"
+    "lodash": "^4.16.4",
+    "typescript": "^2.8.0-dev.20180308"
   }
 }
