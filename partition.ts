@@ -1,29 +1,3 @@
-// function partition<U extends T>(coll: T[], predicate: (v: T) => v is U): [U[],Exclude<T, U>[]] {
-//   if (predicate(v)) {
-//     return
-//   }
-// }
-
-// type Without<T, U> = T extends U ? never : T;
-// type Pred<T, U extends T> = (v: T) => boolean;
-type NumberOrString = number | string;
-
-// function isString<T>(val: T): val is string {
-//   return typeof(val) === 'string';
-// }
-
-interface Bla {
-  kind: 'BLA';
-  value: number;
-}
-
-interface Blub {
-  kind: 'BLUB';
-  value: string;
-}
-
-type BlaOrBlub = Bla | Blub;
-
 enum ResultKind {
   Ok,
   Err,
@@ -40,6 +14,22 @@ interface Err {
 }
 
 type Result<T> = Ok<T> | Err;
+
+enum MaybeKind {
+  Some,
+  None,
+}
+
+interface Some<T> {
+  kind: MaybeKind.Some;
+  val: T;
+}
+
+interface None {
+  kind: MaybeKind.None;
+}
+
+type Maybe<T> = Some<T> | None;
 
 function isOk<T>(val: Result<T>): val is Ok<T> {
   return val.kind === ResultKind.Ok;
@@ -76,77 +66,100 @@ type Z = Exclude<X, Y>
 const z: Z = true;
 const p: Partition<X, Y> = [['a', 1], [true, false]];
 
-function partition<T, U extends T>(coll: T[], pred: Pred<T, U>): Partition<T, U> {
-  const first = filter(coll, pred);
-  // return [[], first]; // does not compile
-  // return [first ,[]];
+function isY(val: X | Y): val is Y {
+  return typeof(val) !== 'boolean';
+}
+
+function testXorY(pred: Pred<X, Y>, val: X | Y): string {
+  if (pred(val)) {
+    return typeof(val) === 'string' ? val : val.toString();
+  }
+  const x: Z = val;
+  return 'nope';
+}
+
+function someFn<T, U extends T>(pred: Pred<T, U>, val: U | Exclude<T, U>): void {
+  if (pred(val)) {
+    const u: U = val;
+    console.log(u);
+    return;
+  }
+  const notU: Exclude<T, U> = val;
+  console.log(notU);
+}
+
+function doSthOnString(val: string | number): void {
+  if (typeof val === 'string') {
+    console.log(val);
+    return;
+  }
+  const x: number = val;
+}
+
+function doSthOnOk<T>(val: Result<T>): void {
+  if (val.kind === ResultKind.Ok) {
+    console.log(val.val);
+    return;
+  }
+  console.log('err', val.err);
+}
+
+type Pred2<T, U> = (v: T | U) => v is T;
+function doSth<T, U extends T>(pred: Pred2<U, Exclude<T, U>>, val: U | Exclude<T, U>): void {
+  if (pred(val)) {
+    const u: U = val;
+    console.log(u);
+    return;
+  }
+  const notU: Exclude<T, U> = val;
+  console.log(notU);
+}
+
+type PartitionPred<T, U extends T> = (v: U | Exclude<T, U>) => v is U;
+function partition2<T, U extends T>(coll: T[], pred: PartitionPred<T, U>): Partition<T, U> {
   const seed: Partition<T, U> = [[], []];
-  return coll.reduce((acc: Partition<T, U>, val: T) => {
+  return coll.reduce((acc: Partition<T, U>, val: U | Exclude<T, U>) => {
     const [yes, no] = acc;
     if (pred(val)) {
-      // const x: U = val;
       const p: Partition<T, U> = [[...yes, val], no];
       return p;
-      // return [[...yes, val], no];
     }
     const p: Partition<T, U> = [yes, [...no, val]];
     return p;
-    // const x: Exclude<T, U> = val;
-    // return [[...yes, val], no];
-    // return acc;
   }, seed);
 }
 
-const oks: Ok<number | string>[] = filter(results, isOk);
+function partition<T, U extends T>(coll: T[], pred: Pred<T, U>): Partition<T, U> {
+  const seed: Partition<T, U> = [[], []];
+  return coll.reduce((acc: Partition<T, U>, val: U | Exclude<T, U>) => {
+    const [yes, no] = acc;
+    if (pred(val)) {
+      const p: Partition<T, U> = [[...yes, val], no];
+      return p;
+    }
+    const p: Partition<T, U> = [yes, [...no, val]];
+    return p;
+  }, seed);
+}
+
+function first<T>(coll: T[]): Maybe<T> {
+  return coll.length
+    ? { kind: MaybeKind.Some, val: coll[0] }
+    : { kind: MaybeKind.None };
+}
+
+const [oks, errs] = partition(results, isOk);
+const [stringOks, numberOks] = partition(oks, isString);
+// const oks: Ok<number | string>[] = filter(results, isOk);
 // const oks: Ok<number | string>[] = filter(results, <T>(r: Result<T>): r is Ok<T> => r.kind === 'OK');
-const stringOks: Ok<string>[] = filter(oks, isString);
+// const stringOks: Ok<string>[] = filter(oks, isString);
+const maybeStringOk = first(stringOks);
 
-// type Pred<T, U extends T> = (v: T) => v is U;
-// type Pred<T, U extends T> = (v: T) => v is U;
-// type Partition<T, U> = [U[], (Exclude<T, U>)[]];
-// function partition<T, U extends T>(coll: T[], pred: Pred<T, U>): Partition<U, T> {
-//   return coll.reduce(
-//     (memo: Partition<U, T>, val: T): Partition<U, T> => {
-//       const [fst, lst] = memo;
-//       if (pred(val)) {
-//         const u: U = val;
-//         // fst.push(val);
-//         return [[u], []];
-//         // return memo;
-//       }
-//       const t: Extract<T, U> = val;
-//       // return [[], [t]];
-//       // lst.push(val);
-//       return memo;
-//     },
-//     [[], []],
-//   );
-// }
-//   const fst: U[] = [];
-//   const lst: Without<T, U> = [];
-//   // const memo = {
-//   //   fst: U
-//   //   lst: Exclude<T, U>
-//   // };
-//   const parts = coll.reduce(
-//     (memo, val: T) => {
-//       if (pred(val)) {
-//         const fst = [...memo.fst, val];
-//         return { ...memo, fst };
-//       }
-//       const lst = [...memo.lst, val];
-//       return { ...memo, lst };
-//     },
-//     { fst: [], lst: [] },
-//   );
-
-//   return [parts.fst, parts.lst];
-// }
-
-// const mixedArray = [2, 'BLA', 1];
-// const [strings, numbers] = partition(
-//   mixedArray,
-//   val => typeof val === 'string',
-// );
-
-// console.log('mgns %j %j', strings, numbers);
+function withDefault<T>(maybe: Maybe<T>, def: T): T {
+  switch(maybe.kind) {
+    case MaybeKind.Some:
+      return maybe.val;
+    case MaybeKind.None:
+      return def;
+  }
+}
