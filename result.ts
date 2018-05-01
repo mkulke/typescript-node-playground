@@ -27,14 +27,16 @@ function isOk<T>(val: Result<T>): val is Ok<T> {
   return val.kind === ResultKind.Ok;
 }
 
+function flatMap<T, U>(fn: (val: T) => Result<U>, res: Result<T>): Result<U> {
+  return isOk(res) ? fn(flatten(res)) : res;
+}
+
+function map<T, U>(fn: (val: T) => U, res: Result<T>): Result<U> {
+  return isOk(res) ? ok(fn(flatten(res))) : res;
+}
+
 function flatten<T>(ok: Ok<T>): T {
   return ok.val;
 }
 
-export {
-  Result,
-  flatten,
-  isOk,
-  ok,
-  err,
-}
+export { Result, flatten, isOk, ok, err };
